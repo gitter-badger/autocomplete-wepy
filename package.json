@@ -15,6 +15,9 @@
       }
     }
   },
+  "dependencies": {
+    "atom-package-deps": "^4.4.1"
+  },
   "package-deps": [
     "language-tencent-wepy"
   ],
