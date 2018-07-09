@@ -10,12 +10,17 @@ module.exports =
   completions: COMPLETIONS
 
   getSuggestions: (request) ->
+    @isFunctionStart(request)
     if @isAttributeValueStart(request)
       @getAttributeValueCompletions(request)
     else if @isAttributeStart(request)
       @getAttributeNameCompletions(request)
     else if @isTagStart(request)
       @getTagNameCompletions(request)
+    else if @isFunctionStart(request)
+      @getFunctionCompletions(request)
+    else if @isFunctionArgumentKeyStart(request)
+      @getFunctionArgumentKeyCompletions(request)
     else
       []
 
@@ -25,6 +30,25 @@ module.exports =
   triggerAutocomplete: (editor) ->
     atom.commands.dispatch(atom.views.getView(editor), 'autocomplete-plus:activate', activatedManually: false)
 
+  isFunctionStart: ({prefix, scopeDescriptor, bufferPosition, editor}) ->
+    return true if prefix.trim() and prefix.indexOf('wepy.') is -1
+
+  isFunctionArgumentKeyStart: ({scopeDescriptor, bufferPosition, editor}) ->
+    scopes = scopeDescriptor.getScopesArray()
+
+    previousBufferPosition = [bufferPosition.row, Math.max(0, bufferPosition.column - 1)]
+    previousScopes = editor.scopeDescriptorForBufferPosition(previousBufferPosition)
+    previousScopesArray = previousScopes.getScopesArray()
+
+    # autocomplete here: attribute="|"
+    # not here: attribute=|""
+    # or here: attribute=""|
+    # or here: attribute="""|
+    @hasStringScope(scopes) and @hasStringScope(previousScopesArray) and
+      previousScopesArray.indexOf('punctuation.definition.string.end.html') is -1 and
+      @hasTagScope(scopes) and
+      @getPreviousAttribute(editor, bufferPosition)?
+  getFunctionArgumentKeyCompletions
   isTagStart: ({prefix, scopeDescriptor, bufferPosition, editor}) ->
     return @hasTagScope(scopeDescriptor.getScopesArray()) if prefix.trim() and prefix.indexOf('<') is -1
 
@@ -43,6 +67,7 @@ module.exports =
     previousBufferPosition = [bufferPosition.row, Math.max(0, bufferPosition.column - 1)]
     previousScopes = editor.scopeDescriptorForBufferPosition(previousBufferPosition)
     previousScopesArray = previousScopes.getScopesArray()
+    # console.log("previousScopesArray",previousScopesArray)
 
     return true if previousScopesArray.indexOf('entity.other.attribute-name.html') isnt -1
     return false unless @hasTagScope(scopes)
@@ -77,6 +102,31 @@ module.exports =
     scopes.indexOf('string.quoted.double.html') isnt -1 or
       scopes.indexOf('string.quoted.single.html') isnt -1
 
+  getFunctionCompletions: ({prefix, editor, bufferPosition}) ->
+    completions = []
+    for tag, options of @completions.functions when  firstCharsEqual(tag, prefix)
+      completions.push(@buildFunctionCompletion(tag, options))
+    completions
+  buildFunctionCompletion: (tag, {description,promise}) ->
+    snippet: "#{tag}({\"${1:arg1}\": \"${2:arg2}\"})"
+    displayText : tag
+    type: 'function'
+    leftLabel: if promise then "Promise" else "void"
+    rightLabel: "Object"
+    description: description ? "HTML <#{tag}> tag"
+    descriptionMoreURL: if description then @getTagDocsURL(tag) else null
+
+  getFunctionArgumentKeyCompletions: ({prefix, editor, bufferPosition}) ->
+    completions = []
+    for tag, options of @completions.params when  firstCharsEqual(tag, prefix)
+      completions.push(@buildFunctionArgumentKeyCompletion(tag, options))
+    completions
+
+  buildFunctionArgumentKeyCompletion: (tag, {description,name}) ->
+    text: name
+    type: 'variable'
+    description: description ? "HTML <#{name}> tag"
+    descriptionMoreURL: if description then @getTagDocsURL(tag) else null
   getTagNameCompletions: ({prefix, editor, bufferPosition}) ->
     # autocomplete-plus's default prefix setting does not capture <. Manually check for it.
     ignorePrefix = editor.getTextInRange([[bufferPosition.row, bufferPosition.column - 1], bufferPosition]) is '<'

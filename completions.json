@@ -2360,5 +2360,77 @@
     "text/space/nbsp": {
       "description": "根据字体设置的空格大小"
     }
+  },
+  "functions": {
+    "request": {
+      "promise": "true",
+      "params": [
+        "url",
+        "data",
+        "header",
+        "method",
+        "dataType",
+        "responseType"
+      ],
+      "description": "发起网络请求"
+    }
+  },
+  "params": {
+    "request/url": {
+      "name": "url",
+      "type": "String",
+      "required": "true",
+      "default": "",
+      "description": "开发者服务器接口地址"
+    },
+    "request/data": {
+      "name": "data",
+      "type": "Object/String/ArrayBuffer",
+      "required": "false",
+      "default": "",
+      "description": "请求的参数"
+    },
+    "request/header": {
+      "name": "header",
+      "type": "Object",
+      "required": "false",
+      "default": "",
+      "description": "设置请求的 header，header 中不能设置 Referer。"
+    },
+    "request/method": {
+      "name": "method",
+      "options": [
+        "OPTIONS",
+        "GET",
+        "HEAD",
+        "POST",
+        "PUT",
+        "DELETE",
+        "TRACE",
+        "CONNECT"
+      ],
+      "type": "String",
+      "required": "false",
+      "default": "GET",
+      "description": "（需大写）有效值：OPTIONS, GET, HEAD, POST, PUT, DELETE, TRACE, CONNECT"
+    },
+    "request/dataType": {
+      "name": "dataType",
+      "type": "String",
+      "required": "false",
+      "default": "json",
+      "description": "如果设为json，会尝试对返回的数据做一次 JSON.parse"
+    },
+    "request/responseType": {
+      "name": "responseType",
+      "options": [
+        "text",
+        "arraybuffer"
+      ],
+      "type": "String",
+      "required": "false",
+      "default": "text",
+      "description": "设置响应的数据类型。合法值：text、arraybuffer"
+    }
   }
 }
