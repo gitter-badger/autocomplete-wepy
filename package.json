@@ -15,6 +15,9 @@
       }
     }
   },
+  "dependencies": {
+    "language-tencent-wepy": "^0.1.0"
+  },
   "devDependencies": {
     "coffeelint": "^1.9.7",
     "request": "^2.53.0"
