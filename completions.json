@@ -2362,6 +2362,146 @@
     }
   },
   "functions": {
+    "stopRecord": {
+      "promise": "false",
+      "description": ""
+    },
+    "getRecorderManager": {
+      "promise": "false",
+      "description": ""
+    },
+    "pauseVoice": {
+      "promise": "false",
+      "description": ""
+    },
+    "stopVoice": {
+      "promise": "false",
+      "description": ""
+    },
+    "pauseBackgroundAudio": {
+      "promise": "false",
+      "description": ""
+    },
+    "stopBackgroundAudio": {
+      "promise": "false",
+      "description": ""
+    },
+    "getBackgroundAudioManager": {
+      "promise": "false",
+      "description": ""
+    },
+    "createAudioContext": {
+      "promise": "false",
+      "description": ""
+    },
+    "createInnerAudioContext": {
+      "promise": "false",
+      "description": ""
+    },
+    "createVideoContext": {
+      "promise": "false",
+      "description": ""
+    },
+    "createCameraContext": {
+      "promise": "false",
+      "description": ""
+    },
+    "createMapContext": {
+      "promise": "false",
+      "description": ""
+    },
+    "canIUse": {
+      "promise": "false",
+      "description": ""
+    },
+    "startAccelerometer": {
+      "promise": "false",
+      "description": ""
+    },
+    "stopAccelerometer": {
+      "promise": "false",
+      "description": ""
+    },
+    "startCompass": {
+      "promise": "false",
+      "description": ""
+    },
+    "stopCompass": {
+      "promise": "false",
+      "description": ""
+    },
+    "onBLECharacteristicValueChange": {
+      "promise": "false",
+      "description": ""
+    },
+    "onBLEConnectionStateChange": {
+      "promise": "false",
+      "description": ""
+    },
+    "hideToast": {
+      "promise": "false",
+      "description": ""
+    },
+    "hideLoading": {
+      "promise": "false",
+      "description": ""
+    },
+    "showNavigationBarLoading": {
+      "promise": "false",
+      "description": ""
+    },
+    "hideNavigationBarLoading": {
+      "promise": "false",
+      "description": ""
+    },
+    "navigateBack": {
+      "promise": "false",
+      "description": ""
+    },
+    "createAnimation": {
+      "promise": "false",
+      "description": ""
+    },
+    "pageScrollTo": {
+      "promise": "false",
+      "description": ""
+    },
+    "createSelectorQuery": {
+      "promise": "false",
+      "description": ""
+    },
+    "createCanvasContext": {
+      "promise": "false",
+      "description": ""
+    },
+    "createContext": {
+      "promise": "false",
+      "description": ""
+    },
+    "drawCanvas": {
+      "promise": "false",
+      "description": ""
+    },
+    "hideKeyboard": {
+      "promise": "false",
+      "description": ""
+    },
+    "stopPullDownRefresh": {
+      "promise": "false",
+      "description": ""
+    },
+    "arrayBufferToBase64": {
+      "promise": "false",
+      "description": ""
+    },
+    "base64ToArrayBuffer": {
+      "promise": "false",
+      "description": ""
+    },
+    "hideKeyboard": {
+      "promise": "false",
+      "description": ""
+    },
     "request": {
       "promise": "true",
       "params": [
@@ -2373,6 +2513,252 @@
         "responseType"
       ],
       "description": "发起网络请求"
+    },
+    "uploadFile": {
+      "promise": "true",
+      "params": [
+        "url",
+        "filePath",
+        "name",
+        "header",
+        "formData"
+      ],
+      "description": "下载文件资源到本地，客户端直接发起一个 HTTP GET 请求，返回文件的本地临时路径。如页面通过 wx.chooseImage 等接口获取到一个本地资源的临时文件路径后，可通过此接口将本地资源上传到指定服务器。"
+    },
+    "downloadFile": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "connectSocket": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "sendSocketMessage": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "previewImage": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "getImageInfo": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "saveImageToPhotosAlbum": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "playVoice": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "playBackgroundAudio": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "seekBackgroundAudio": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "saveFile": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "getFileInfo": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "getSavedFileInfo": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "removeSavedFile": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "setStorage": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "getStorage": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "removeStorage": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "openLocation": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "makePhoneCall": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "setClipboardData": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "getConnectedBluetoothDevices": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "createBLEConnection": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "closeBLEConnection": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "getBLEDeviceServices": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "startBeaconDiscovery": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "setScreenBrightness": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "setKeepScreenOn": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "showToast": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "showLoading": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "showModal": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "showActionSheet": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "setNavigationBarTitle": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "setNavigationBarColor": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "setTabBarBadge": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "removeTabBarBadge": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "showTabBarRedDot": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "hideTabBarRedDot": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "showTabBar": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "hideTabBar": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "setTopBarText": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "navigateTo": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "redirectTo": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "navigateBack": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "reLaunch": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "switchTab": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "switchTab": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "switchTab": {
+      "promise": "true",
+      "params": [],
+      "description": ""
+    },
+    "pageScrollTo": {
+      "promise": "true",
+      "params": [],
+      "description": ""
     }
   },
   "params": {
@@ -2431,6 +2817,44 @@
       "required": "false",
       "default": "text",
       "description": "设置响应的数据类型。合法值：text、arraybuffer"
+    },
+    "uploadFile/url": {
+      "name": "url",
+      "type": "String",
+      "options": [],
+      "required": "true",
+      "default": "",
+      "description": "开发者服务器 url"
+    },
+    "uploadFile/filePath": {
+      "name": "filePath",
+      "type": "String",
+      "options": [],
+      "required": "true",
+      "default": "",
+      "description": "要上传文件资源的路径"
+    },
+    "uploadFile/name": {
+      "name": "name",
+      "type": "String",
+      "options": [],
+      "required": "true",
+      "default": "",
+      "description": "文件对应的 key , 开发者在服务器端通过这个 key 可以获取到文件二进制内容"
+    },
+    "uploadFile/header": {
+      "name": "header",
+      "type": "Object",
+      "required": "true",
+      "default": "",
+      "description": "HTTP 请求 Header, header 中不能设置 Referer"
+    },
+    "uploadFile/formData": {
+      "name": "formData",
+      "type": "Object",
+      "required": "true",
+      "default": "",
+      "description": "HTTP 请求中其他额外的 form data"
     }
   }
 }
