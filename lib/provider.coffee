@@ -2,15 +2,20 @@ COMPLETIONS = require '../completions.json'
 
 attributePattern = /\s+([a-zA-Z][-a-zA-Z]*)\s*=\s*$/
 tagPattern = /<([a-zA-Z][-a-zA-Z]*)(?:\s|$)/
-
+functionNamePattern = /wepy.([a-zA-Z][-a-zA-Z]*)\s*\(/
+functionArgumentKeyPattern = /"([a-zA-Z][-a-zA-Z]*)"\s*:/g
+functionPreviousKeywordPattern = /\s*(wepy)./
 module.exports =
   selector: '.text.html.wepy'
   disableForSelector: '.text.html.wepy .comment'
   filterSuggestions: true
+  inclusionPriority: 1
+  excludeLowerPriority: true
+  suggestionPriority: 2
+
   completions: COMPLETIONS
 
   getSuggestions: (request) ->
-    @isFunctionStart(request)
     if @isAttributeValueStart(request)
       @getAttributeValueCompletions(request)
     else if @isAttributeStart(request)
@@ -21,34 +26,87 @@ module.exports =
       @getFunctionCompletions(request)
     else if @isFunctionArgumentKeyStart(request)
       @getFunctionArgumentKeyCompletions(request)
+    else if @isFunctionArgumentValueStart(request)
+      @getFunctionArgumentValueCompletions(request)
     else
       []
 
   onDidInsertSuggestion: ({editor, suggestion}) ->
-    setTimeout(@triggerAutocomplete.bind(this, editor), 1) if suggestion.type is 'attribute'
+    if suggestion.type is 'attribute'
+      setTimeout(@triggerAutocomplete.bind(this, editor), 1)
+    else if suggestion.type is 'variable'
+      setTimeout(@triggerAutocomplete.bind(this, editor), 1)
 
   triggerAutocomplete: (editor) ->
     atom.commands.dispatch(atom.views.getView(editor), 'autocomplete-plus:activate', activatedManually: false)
 
   isFunctionStart: ({prefix, scopeDescriptor, bufferPosition, editor}) ->
-    return true if prefix.trim() and prefix.indexOf('wepy.') is -1
-
-  isFunctionArgumentKeyStart: ({scopeDescriptor, bufferPosition, editor}) ->
     scopes = scopeDescriptor.getScopesArray()
+    line = editor.lineTextForBufferRow(bufferPosition.row)
+    keywordPrevious = functionPreviousKeywordPattern.exec(line)?[1]
+    scopes.includes('source.js.embedded.html') and
+      keywordPrevious is 'wepy'
 
+  isFunctionArgumentValueStart: ({scopeDescriptor, bufferPosition, editor}) ->
+    scopes = scopeDescriptor.getScopesArray()
+    quoteIndex = Math.max(0, bufferPosition.column - 1)
+    while quoteIndex >= 0
+        preScopeDescriptor = editor.scopeDescriptorForBufferPosition([bufferPosition.row, quoteIndex])
+        scopes = preScopeDescriptor.getScopesArray()
+        if not this.hasJsStringScope(scopes) or scopes.includes('punctuation.definition.string.begin.js')
+            break
+        quoteIndex--
+
+    quotePrevious = editor.getTextInBufferRange([[bufferPosition.row, Math.max(0, quoteIndex-2)], [bufferPosition.row, quoteIndex]])
     previousBufferPosition = [bufferPosition.row, Math.max(0, bufferPosition.column - 1)]
     previousScopes = editor.scopeDescriptorForBufferPosition(previousBufferPosition)
     previousScopesArray = previousScopes.getScopesArray()
 
-    # autocomplete here: attribute="|"
-    # not here: attribute=|""
-    # or here: attribute=""|
-    # or here: attribute="""|
-    @hasStringScope(scopes) and @hasStringScope(previousScopesArray) and
+    # autocomplete here: {"|":""}
+    # not here: {|"":""}
+    # or here: {""|:""}
+    # or here: {"""|:""}
+    # or here: {"":"|"}
+
+    @hasJsStringScope(scopes) and @hasJsStringScope(previousScopesArray) and
       previousScopesArray.indexOf('punctuation.definition.string.end.html') is -1 and
-      @hasTagScope(scopes) and
-      @getPreviousAttribute(editor, bufferPosition)?
-  getFunctionArgumentKeyCompletions
+      scopes.includes('source.js.embedded.html') and
+      scopes.includes('meta.arguments.js') and
+      quotePrevious.trim().indexOf(':') isnt -1
+
+  isFunctionArgumentKeyStart: ({scopeDescriptor, bufferPosition, editor}) ->
+    scopes = scopeDescriptor.getScopesArray()
+    quoteIndex = Math.max(0, bufferPosition.column - 1)
+    while quoteIndex >= 0
+        preScopeDescriptor = editor.scopeDescriptorForBufferPosition([bufferPosition.row, quoteIndex])
+        scopes = preScopeDescriptor.getScopesArray()
+        if not this.hasJsStringScope(scopes) or scopes.includes('punctuation.definition.string.begin.js')
+            break
+        quoteIndex--
+
+    quotePrevious = editor.getTextInBufferRange([[bufferPosition.row, Math.max(0, quoteIndex-2)], [bufferPosition.row, quoteIndex]])
+    previousBufferPosition = [bufferPosition.row, Math.max(0, bufferPosition.column - 1)]
+    previousScopes = editor.scopeDescriptorForBufferPosition(previousBufferPosition)
+    previousScopesArray = previousScopes.getScopesArray()
+    editor.getTextInBufferRange([[bufferPosition.row, 0], [bufferPosition.row, quoteIndex]])
+    # autocomplete here: {"|":""}
+    # not here: {|"":""}
+    # or here: {""|:""}
+    # or here: {"""|:""}
+    # or here: {"":"|"}
+
+    @hasJsStringScope(scopes) and @hasJsStringScope(previousScopesArray) and
+      previousScopesArray.indexOf('punctuation.definition.string.end.html') is -1 and
+      scopes.includes('source.js.embedded.html') and
+      scopes.includes('meta.arguments.js') and
+      quotePrevious.trim().indexOf(':') is -1
+
+  buildFunctionArgmentKeyCompletion: (tag, {description}) ->
+    text: tag
+    type: 'value'
+    description: description ? "HTML <#{tag}> tag"
+    descriptionMoreURL: if description then @getTagDocsURL(tag) else null
+
   isTagStart: ({prefix, scopeDescriptor, bufferPosition, editor}) ->
     return @hasTagScope(scopeDescriptor.getScopesArray()) if prefix.trim() and prefix.indexOf('<') is -1
 
@@ -67,7 +125,6 @@ module.exports =
     previousBufferPosition = [bufferPosition.row, Math.max(0, bufferPosition.column - 1)]
     previousScopes = editor.scopeDescriptorForBufferPosition(previousBufferPosition)
     previousScopesArray = previousScopes.getScopesArray()
-    # console.log("previousScopesArray",previousScopesArray)
 
     return true if previousScopesArray.indexOf('entity.other.attribute-name.html') isnt -1
     return false unless @hasTagScope(scopes)
@@ -102,13 +159,18 @@ module.exports =
     scopes.indexOf('string.quoted.double.html') isnt -1 or
       scopes.indexOf('string.quoted.single.html') isnt -1
 
+  hasJsStringScope: (scopes) ->
+    scopes.indexOf('string.quoted.double.js') isnt -1 or
+      scopes.indexOf('string.quoted.single.js') isnt -1
+
   getFunctionCompletions: ({prefix, editor, bufferPosition}) ->
     completions = []
-    for tag, options of @completions.functions when  firstCharsEqual(tag, prefix)
+    for tag, options of @completions.functions when not prefix or prefix is '.'  or firstCharsEqual(tag, prefix)
       completions.push(@buildFunctionCompletion(tag, options))
     completions
+
   buildFunctionCompletion: (tag, {description,promise}) ->
-    snippet: "#{tag}({\"${1:arg1}\": \"${2:arg2}\"})"
+    snippet: "#{tag}({${1}})"
     displayText : tag
     type: 'function'
     leftLabel: if promise then "Promise" else "void"
@@ -118,15 +180,31 @@ module.exports =
 
   getFunctionArgumentKeyCompletions: ({prefix, editor, bufferPosition}) ->
     completions = []
-    for tag, options of @completions.params when  firstCharsEqual(tag, prefix)
-      completions.push(@buildFunctionArgumentKeyCompletion(tag, options))
+    func = @getPreviousFunctionName(editor, bufferPosition)
+    values = @completions.functions[func]?.params ? []
+    for value in values when not prefix or firstCharsEqual(value, prefix)
+      completions.push(@buildFunctionArgumentKeyCompletion(func, value))
     completions
 
-  buildFunctionArgumentKeyCompletion: (tag, {description,name}) ->
-    text: name
+  getFunctionArgumentValueCompletions: ({prefix, editor, bufferPosition}) ->
+    completions = []
+    func = @getPreviousFunctionName(editor, bufferPosition)
+    key = @getPrevFunctionArgumentKey(editor, bufferPosition)
+    values = @completions.params["#{func}/#{key}"]?.options ? []
+    for value in values when not prefix or firstCharsEqual(value, prefix)
+      completions.push(@buildFunctionArgumentValueCompletion(value))
+    completions
+
+  buildFunctionArgumentValueCompletion: (value) ->
+    text : value
+    type: 'value'
+
+  buildFunctionArgumentKeyCompletion: (func, value) ->
+    snippet: "#{value}\": \"${1}"
+    displayText : value
     type: 'variable'
-    description: description ? "HTML <#{name}> tag"
-    descriptionMoreURL: if description then @getTagDocsURL(tag) else null
+    description:  @completions.params["#{func}/#{value}"]?.description ? null
+
   getTagNameCompletions: ({prefix, editor, bufferPosition}) ->
     # autocomplete-plus's default prefix setting does not capture <. Manually check for it.
     ignorePrefix = editor.getTextInRange([[bufferPosition.row, bufferPosition.column - 1], bufferPosition]) is '<'
@@ -214,6 +292,26 @@ module.exports =
       row--
     return
 
+  getPrevFunctionArgumentKey: (editor, bufferPosition) ->
+    lastIndex = 1
+    {row} = bufferPosition
+    line = editor.lineTextForBufferRow(row)
+    name = ''
+    while lastIndex > 0
+      temp = functionArgumentKeyPattern.exec(line)?[1]
+      lastIndex = functionArgumentKeyPattern.lastIndex
+      if temp isnt undefined
+        name = temp
+    return name if name
+
+  getPreviousFunctionName: (editor, bufferPosition) ->
+    {row} = bufferPosition
+    while row >= 0
+      name = functionNamePattern.exec(editor.lineTextForBufferRow(row))?[1]
+      return name if name
+      row--
+    return
+
   getPreviousAttribute: (editor, bufferPosition) ->
     # Remove everything until the opening quote (if we're in a string)
     quoteIndex = bufferPosition.column - 1 # Don't start at the end of the line
@@ -229,6 +327,11 @@ module.exports =
     # Some local attributes are valid for multiple tags but have different attribute values
     # To differentiate them, they are identified in the completions file as tag/attribute
     @completions.attributes[attribute]?.attribOption ? @completions.attributes["#{tag}/#{attribute}"]?.attribOption ? []
+
+  getFunctionArgumentValues: (name, key) ->
+    # Some local attributes are valid for multiple tags but have different attribute values
+    # To differentiate them, they are identified in the completions file as tag/attribute
+    @completions.functions['key']?.params ? @completions.attributes["#{tag}/#{attribute}"]?.attribOption ? []
 
   getTagAttributes: (tag) ->
     @completions.tags[tag]?.attributes ? []
