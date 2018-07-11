@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-wepy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "WePY element and attribute autocompletions",
   "main": "./lib/main",
   "license": "MIT",
