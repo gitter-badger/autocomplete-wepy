@@ -4,7 +4,7 @@ attributePattern = /\s+([a-zA-Z][-a-zA-Z]*)\s*=\s*$/
 tagPattern = /<([a-zA-Z][-a-zA-Z]*)(?:\s|$)/
 functionNamePattern = /wepy.([a-zA-Z][-a-zA-Z]*)\s*\(/
 functionArgumentKeyPattern = /"([a-zA-Z][-a-zA-Z]*)"\s*:/g
-functionPreviousKeywordPattern = /\s*(wepy)./
+functionPreviousKeywordPattern = /\s*(wepy).[a-zA-Z]*$/
 module.exports =
   selector: '.text.html.wepy'
   disableForSelector: '.text.html.wepy .comment'
@@ -112,7 +112,6 @@ module.exports =
 
     # autocomplete-plus's default prefix setting does not capture <. Manually check for it.
     prefix = editor.getTextInRange([[bufferPosition.row, bufferPosition.column - 1], bufferPosition])
-
     scopes = scopeDescriptor.getScopesArray()
 
     # Don't autocomplete in embedded languages
@@ -169,13 +168,13 @@ module.exports =
       completions.push(@buildFunctionCompletion(tag, options))
     completions
 
-  buildFunctionCompletion: (tag, {description,promise}) ->
-    snippet: "#{tag}({${1}})"
+  buildFunctionCompletion: (tag, {description,returnType}) ->
+    snippet: if tag.indexOf("on") is 0 then "#{tag}(function(res){${1}})" else "#{tag}({${1}})"
     displayText : tag
     type: 'function'
-    leftLabel: if promise then "Promise" else "void"
-    rightLabel: "Object"
-    description: description ? "HTML <#{tag}> tag"
+    leftLabel: if returnType then returnType else "void"
+    rightLabel: if tag.indexOf("on") is 0 then "function" else "Object"
+    description: description ? null
     descriptionMoreURL: if description then @getTagDocsURL(tag) else null
 
   getFunctionArgumentKeyCompletions: ({prefix, editor, bufferPosition}) ->
