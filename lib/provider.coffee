@@ -51,11 +51,11 @@ module.exports =
     scopes = scopeDescriptor.getScopesArray()
     quoteIndex = Math.max(0, bufferPosition.column - 1)
     while quoteIndex >= 0
-        preScopeDescriptor = editor.scopeDescriptorForBufferPosition([bufferPosition.row, quoteIndex])
-        scopes = preScopeDescriptor.getScopesArray()
-        if not this.hasJsStringScope(scopes) or scopes.includes('punctuation.definition.string.begin.js')
-            break
-        quoteIndex--
+      preScopeDescriptor = editor.scopeDescriptorForBufferPosition([bufferPosition.row, quoteIndex])
+      scopes = preScopeDescriptor.getScopesArray()
+      if not this.hasJsStringScope(scopes) or scopes.includes('punctuation.definition.string.begin.js')
+        break
+      quoteIndex--
 
     quotePrevious = editor.getTextInBufferRange([[bufferPosition.row, Math.max(0, quoteIndex-2)], [bufferPosition.row, quoteIndex]])
     previousBufferPosition = [bufferPosition.row, Math.max(0, bufferPosition.column - 1)]
@@ -78,11 +78,11 @@ module.exports =
     scopes = scopeDescriptor.getScopesArray()
     quoteIndex = Math.max(0, bufferPosition.column - 1)
     while quoteIndex >= 0
-        preScopeDescriptor = editor.scopeDescriptorForBufferPosition([bufferPosition.row, quoteIndex])
-        scopes = preScopeDescriptor.getScopesArray()
-        if not this.hasJsStringScope(scopes) or scopes.includes('punctuation.definition.string.begin.js')
-            break
-        quoteIndex--
+      preScopeDescriptor = editor.scopeDescriptorForBufferPosition([bufferPosition.row, quoteIndex])
+      scopes = preScopeDescriptor.getScopesArray()
+      if not this.hasJsStringScope(scopes) or scopes.includes('punctuation.definition.string.begin.js')
+        break
+      quoteIndex--
 
     quotePrevious = editor.getTextInBufferRange([[bufferPosition.row, Math.max(0, quoteIndex-2)], [bufferPosition.row, quoteIndex]])
     previousBufferPosition = [bufferPosition.row, Math.max(0, bufferPosition.column - 1)]
@@ -168,9 +168,9 @@ module.exports =
       completions.push(@buildFunctionCompletion(tag, options))
     completions
 
-  buildFunctionCompletion: (tag, {description,returnType}) ->
+  buildFunctionCompletion: (tag, {description, returnType}) ->
     snippet: if tag.indexOf("on") is 0 then "#{tag}(function(res){${1}})" else "#{tag}({${1}})"
-    displayText : tag
+    displayText: tag
     type: 'function'
     leftLabel: if returnType then returnType else "void"
     rightLabel: if tag.indexOf("on") is 0 then "function" else "Object"
@@ -195,14 +195,14 @@ module.exports =
     completions
 
   buildFunctionArgumentValueCompletion: (value) ->
-    text : value
+    text: value
     type: 'value'
 
   buildFunctionArgumentKeyCompletion: (func, value) ->
     snippet: "#{value}\": \"${1}"
-    displayText : value
+    displayText: value
     type: 'variable'
-    description:  @completions.params["#{func}/#{value}"]?.description ? null
+    description: @completions.params["#{func}/#{value}"]?.description ? null
 
   getTagNameCompletions: ({prefix, editor, bufferPosition}) ->
     # autocomplete-plus's default prefix setting does not capture <. Manually check for it.
