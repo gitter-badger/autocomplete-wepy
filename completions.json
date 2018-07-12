@@ -963,7 +963,7 @@
     "bindgetuserinfo": {
       "type": "String",
       "default": "",
-      "description": "用户点击该按钮时，会返回获取到的用户信息，回调的detail数据与wx.getUserInfo返回的一致,生效时机 open-type='getUserInfo'"
+      "description": "用户点击该按钮时，会返回获取到的用户信息，回调的detail数据与getUserInfo返回的一致,生效时机 open-type='getUserInfo'"
     },
     "session-from": {
       "type": "String",
@@ -2362,6 +2362,10 @@
     }
   },
   "functions": {
+    "startRecord": {
+      "returnType": "Promise",
+      "description": "开始录音。当主动调用wstopRecord，或者录音超过1分钟时自动结束录音，返回录音文件的临时文件路径。当用户离开小程序时，此接口无法调用。\n需要用户授权 scope.record\n注意：1.6.0 版本开始，本接口不再维护。建议使用能力更强的 getRecorderManager 接口"
+    },
     "stopRecord": {
       "returnType": "void",
       "description": "​主动调用停止录音。"
@@ -2379,6 +2383,10 @@
       "returnType": "void",
       "description": "结束播放语音。"
     },
+    "getBackgroundAudioPlayerState": {
+      "returnType": "void",
+      "description": "获取后台音乐播放状态。\n注意：1.2.0 版本开始，本接口不再维护。建议使用能力更强的 getBackgroundAudioManager 接口"
+    },
     "pauseBackgroundAudio": {
       "returnType": "void",
       "description": "暂停播放音乐。"
@@ -2386,6 +2394,18 @@
     "stopBackgroundAudio": {
       "returnType": "void",
       "description": "停止播放音乐。"
+    },
+    "onBackgroundAudioPlay": {
+      "returnType": "void",
+      "description": "监听音乐播放。"
+    },
+    "onBackgroundAudioPause": {
+      "returnType": "void",
+      "description": "监听音乐暂停。"
+    },
+    "onBackgroundAudioStop": {
+      "returnType": "void",
+      "description": "监听音乐停止。"
     },
     "getBackgroundAudioManager": {
       "returnType": "backgroundAudioManager",
@@ -2413,6 +2433,23 @@
     "createMapContext": {
       "returnType": "mapContext",
       "description": "创建并返回 map 上下文 mapContext 对象。在自定义组件下，第二个参数传入组件实例this，以操作组件内 <map/> 组件"
+    },
+    "getNetworkType": {
+      "returnType": "Promise",
+      "description": "获取网络类型。"
+    },
+    "onNetworkStatusChange": {
+      "returnType": "Promise",
+      "version": "1.1.0",
+      "description": "监听网络状态变化。"
+    },
+    "getSystemInfo": {
+      "returnType": "Promise",
+      "description": "获取系统信息。"
+    },
+    "getSystemInfoSync": {
+      "returnType": "Object",
+      "description": "获取系统信息同步接口"
     },
     "canIUse": {
       "returnType": "Boolean",
@@ -2469,14 +2506,30 @@
       "returnType": "void",
       "description": "在当前页面显示导航条加载动画。"
     },
-    "hideNavigationBarLoading": {
+    "setBackgroundTextStyle": {
+      "returnType": "void",
+      "params": ["textStyle"],
+      "version": "2.1.0",
+      "description": "动态设置下拉背景字体、loading 图的样式"
+    },
+    "setBackgroundColor": {
       "returnType": "void",
       "description": "隐藏导航条加载动画。"
+    },
+    "setBackgroundColor": {
+      "returnType": "void",
+      "params": ["backgroundColor","backgroundColorTop","backgroundColorBottom"],
+      "version": "2.1.0",
+      "description": "动态设置窗口的背景色"
     },
     "createSelectorQuery": {
       "returnType": "void",
       "version": "1.4.0",
       "description": "返回一个SelectorQuery对象实例。可以在这个实例上使用select等方法选择节点，并使用boundingClientRect等方法选择需要查询的信息。"
+    },
+    "createIntersectionObserver": {
+      "returnType": "IntersectionObserver ",
+      "description": "创建 IntersectionObserver 对象"
     },
     "createContext": {
       "returnType": "void",
@@ -2497,6 +2550,38 @@
     "base64ToArrayBuffer": {
       "returnType": "void",
       "description": ""
+    },
+    "login": {
+      "returnType": "Promise",
+      "params": ["timeout"],
+      "description": "调用接口 login() 获取临时登录凭证（code）"
+    },
+    "getUserInfo": {
+      "returnType": "Promise",
+      "params": ["timeout","withCredentials","timeout"],
+      "description": "注意：此接口有调整，使用该接口将不再出现授权弹窗，请使用 <button open-type='getUserInfo'></button> 引导用户主动进行授权操作\n1.当用户未授权过，调用该接口将直接报错\n2.当用户授权过，可以使用该接口获取用户信息"
+    },
+    "chooseAddress": {
+      "returnType": "Promise",
+      "version": "1.1.0",
+      "description": "调起用户编辑收货地址原生界面，并在编辑完成后返回用户选择的地址。\n需要用户授权 scope.address"
+    },
+    "requestPayment": {
+      "returnType": "Promise",
+      "params": ["nonceStr","timeStamp","package","signType","paySign"],
+      "description": "发起微信支付"
+    },
+    "addCard": {
+      "returnType": "Promise",
+      "params": ["cardList"],
+      "version": "1.1.0",
+      "description": "批量添加卡券。"
+    },
+    "openCard": {
+      "returnType": "Promise",
+      "params": ["cardList"],
+      "version": "1.1.0",
+      "description": "查看微信卡包中的卡券。"
     },
     "request": {
       "returnType": "Promise",
@@ -2602,6 +2687,11 @@
       "params": ["position"],
       "description": "控制音乐播放进度。"
     },
+    "chooseVideo": {
+      "returnType": "Promise",
+      "params": ["sourceType","compressed","maxDuration"],
+      "description": "拍摄视频或从手机相册中选视频，返回视频的临时文件路径。"
+    },
     "saveFile": {
       "returnType": "Promise",
       "params": ["tempFilePath"],
@@ -2612,6 +2702,10 @@
       "version": "1.4.0",
       "params": ["filePath","digestAlgorithm"],
       "description": "获取文件信息"
+    },
+    "getSavedFileList": {
+      "returnType": "Promise",
+      "description": "获取本地已保存的文件列表"
     },
     "getSavedFileInfo": {
       "returnType": "Promise",
@@ -2643,6 +2737,14 @@
       "params": ["key"],
       "description": "从本地缓存中同步获取指定 key 对应的内容。"
     },
+    "getStorageInfo": {
+      "returnType": "Promise",
+      "description": "异步获取当前storage的相关信息"
+    },
+    "getStorageInfoSync": {
+      "returnType": "Object",
+      "description": "同步获取当前storage的相关信息"
+    },
     "removeStorage": {
       "returnType": "Promise",
       "params": ["key"],
@@ -2652,6 +2754,14 @@
       "returnType": "Promise",
       "params": ["key"],
       "description": "从本地缓存中同步移除指定 key 。"
+    },
+    "removeStorage": {
+      "returnType": "Promise",
+      "description": "清理本地数据缓存。"
+    },
+    "clearStorageSync": {
+      "returnType": "void",
+      "description": "同步清理本地数据缓存"
     },
     "openLocation": {
       "returnType": "Promise",
@@ -2667,6 +2777,17 @@
       "returnType": "Promise",
       "params": ["data"],
       "description": "设置系统剪贴板的内容"
+    },
+    "getClipboardData": {
+      "returnType": "Promise",
+      "version": "1.1.0",
+      "description": "获取系统剪贴板内容"
+    },
+    "scanCode": {
+      "returnType": "Promise",
+      "version": "1.1.0",
+      "params": ["onlyFromCamera","scanType"],
+      "description": "调起客户端扫码界面，扫码成功后返回对应的结果"
     },
     "getConnectedBluetoothDevices": {
       "returnType": "Promise",
@@ -2797,6 +2918,11 @@
       "params": ["delta"],
       "description": "关闭当前页面，返回上一页面或多级页面。可通过 getCurrentPages()) 获取当前的页面栈，决定需要返回几层。"
     },
+    "createAnimation": {
+      "returnType": "Promise",
+      "params": ["duration","timingFunction","delay","transformOrigin"],
+      "description": "创建一个动画实例animation。调用实例的方法来描述动画。最后通过动画实例的export方法导出动画数据传递给组件的animation属性。\n注意: export 方法每次调用后会清掉之前的动画操作"
+    },
     "reLaunch": {
       "returnType": "Promise",
       "version": "1.1.0",
@@ -2813,7 +2939,65 @@
       "version": "1.4.0",
       "params": ["scrollTop","duration"],
       "description": "将页面滚动到目标位置。"
-    }
+    },
+    "pageScrollTo": {
+      "returnType": "void",
+      "version": "2.1.0",
+      "params": ["family","source","desc"],
+      "description": "动态加载网络字体"
+    },
+    "openDocument": {
+      "returnType": "Promise",
+      "params": ["filePath","fileType"],
+      "description": "新开页面打开文档，支持格式：doc, xls, ppt, pdf, docx, xlsx, pptx"
+    },
+    "getLocation": {
+      "returnType": "void",
+      "params": ["type","altitude"],
+      "description": "获取当前的地理位置、速度。当用户离开小程序后，此接口无法调用；当用户点击“显示在聊天顶部”时，此接口可继续调用。"
+    },
+    "chooseLocation": {
+      "returnType": "void",
+      "description": "打开地图选择位置。\n需要用户授权 scope.userLocation"
+    },
+    "addPhoneContact": {
+      "returnType": "void",
+      "options": [    
+        "name",
+        "nickName",
+        "lastName",
+        "middleName",
+        "firstName" ,
+        "remark" ,
+        "mobilePhoneNumber",
+        "weChatNumber",
+        "addressCountry",
+        "addressState",
+        "addressCity",
+        "addressStreet",
+        "addressPostalCode",
+        "organization",
+        "title",
+        "workFaxNumber",
+        "workPhoneNumber",
+        "hostNumber",
+        "email",
+        "url",
+        "workAddressCountry",
+        "workAddressState",
+        "workAddressCity",
+        "workAddressStreet",
+        "workAddressPostalCode",
+        "homeFaxNumber",
+        "homePhoneNumber",
+        "homeAddressCountry",
+        "homeAddressState",
+        "homeAddressCity",
+        "homeAddressStreet",
+        "homeAddressPostalCode"
+      ],
+      "description": "打开地图选择位置。\n需要用户授权 scope.userLocation"
+    } 
   },
   "params": {
     "request/url": {
